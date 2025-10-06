@@ -13,6 +13,23 @@ import { a11yDark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 const App = () => {
 
   const [payload,setPayload] = useState('')
+  const designation = [
+    'manager',
+    'sales executive',
+    'front-end developer',
+    'backend developer',
+    'android developer',
+    'ceo',
+    'cto',
+    'product manager'
+  ]
+
+  const getDesignation = () =>{
+
+   const index = Math.floor(Math.random() * designation.length) 
+   return designation[index]
+
+  }
 
   const generateUser = () =>{
 
@@ -32,19 +49,64 @@ const App = () => {
 
   }
 
+  const generatePayments = () =>{
+
+    return {
+      id:nanoid(),
+      user:{
+          id:nanoid(),
+          fullName:faker.person.fullName(),
+          mobile:faker.phone.number({ style: 'international' }),
+          email:faker.internet.email(),
+      },
+      product:{
+        id:nanoid(),
+        title: faker.commerce.product(),
+      },
+      amount:Number(faker.commerce.price({min: 1000,max:20000})),
+      orderId:`OID-${nanoid()}`,
+      transactionId:`TSC-${nanoid()}`,
+      method:'UPI',
+      tax:Number(faker.commerce.price({ min: 0, max: 50 })),
+     createdAt:faker.date.anytime()
+
+    }
+
+  }
+
     const generateProduct = () =>{
 
     return {
       id:nanoid(),
      title: faker.commerce.product(),
      description: faker.commerce.productDescription(),
-     price: faker.commerce.price(),
-     discount: faker.commerce.price({ min: 0, max: 100 }),
-     rating: faker.commerce.price({ min: 1, max: 5 }),
+     price: Number(faker.commerce.price({min:1000,max:20000})),
+     discount: Number(faker.commerce.price({ min: 0, max: 50 })),
+     rating: Number(faker.commerce.price({ min: 1, max: 5 })),
      category: faker.commerce.productAdjective(),
      brand: faker.company.buzzNoun(),
      image: faker.image.urlLoremFlickr({ category: 'nproductature' }),
      createdAt:faker.date.anytime()
+    }
+
+  }
+
+  const generateEmployee = () =>{
+
+    return {
+      id:nanoid(),
+      fullName:faker.person.fullName(),
+      mobile:faker.phone.number({ style: 'international' }),
+      email:faker.internet.email(),
+      gender:faker.person.gender(),
+      address:faker.location.streetAddress({ useFullAddress: true }),
+      city:faker.location.city() ,
+      state:faker.location.state(),
+      country:faker.location.country(),
+      pincode:faker.location.zipCode(),
+      salary:Number(faker.commerce.price({min:1000,max:20000})),
+      designation:getDesignation(),
+      createdAt:faker.date.anytime()
     }
 
   }
@@ -63,12 +125,24 @@ const App = () => {
     {
      temp.push(generateProduct())
     }
+     if(values.type === "payments")
+    {
+     temp.push(generatePayments())
+    }
+    if(values.type === "employees")
+    {
+     temp.push(generateEmployee())
+    }
     }
     console.log(temp)
     const str = JSON.stringify(temp,null,4)
      setPayload(str)
 
   }
+
+
+  
+
   const onCopy = () =>{
    navigator.clipboard.writeText(payload)
    message.success("Data Copied")
